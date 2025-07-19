@@ -1525,52 +1525,39 @@
             });
         }
 
-        // Update cursor position and speed-based color
+        // Update cursor position
         document.addEventListener('mousemove', function(e) {
-            // Calculate movement speed
-            const deltaX = e.clientX - lastMouseX;
-            const deltaY = e.clientY - lastMouseY;
-            mouseSpeed = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            
-            // Update position
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
             mouseX = e.clientX;
             mouseY = e.clientY;
             
             cursor.style.left = mouseX + 'px';
             cursor.style.top = mouseY + 'px';
-            
-            // Change color based on speed
-            updateCursorColor(mouseSpeed);
         });
         
-        // Function to update cursor color based on speed
-        function updateCursorColor(speed) {
-            let color, shadowColor;
+        // Set default cursor color (blue to match text)
+        function setDefaultCursor() {
+            const blueColor = '#00d4ff';
+            cursor.style.background = `radial-gradient(circle, ${blueColor} 0%, transparent 70%)`;
+            cursor.style.boxShadow = `0 0 20px ${blueColor}, 0 0 40px ${blueColor}`;
             
-            if (speed < 5) {
-                // Slow movement - White
-                color = '#ffffff';
-                shadowColor = '#ffffff';
-            } else if (speed < 15) {
-                // Medium speed - Blue
-                color = '#00d4ff';
-                shadowColor = '#00d4ff';
-            } else {
-                // Fast movement - Red
-                color = '#ff6b6b';
-                shadowColor = '#ff6b6b';
-            }
-            
-            cursor.style.background = `radial-gradient(circle, ${color} 0%, transparent 70%)`;
-            cursor.style.boxShadow = `0 0 20px ${shadowColor}, 0 0 40px ${shadowColor}`;
-            
-            // Update trail colors too
             cursorTrails.forEach(trail => {
-                trail.element.style.background = color;
+                trail.element.style.background = blueColor;
             });
         }
+        
+        // Set red cursor for interactive elements
+        function setRedCursor() {
+            const redColor = '#ff6b6b';
+            cursor.style.background = `radial-gradient(circle, ${redColor} 0%, transparent 70%)`;
+            cursor.style.boxShadow = `0 0 20px ${redColor}, 0 0 40px ${redColor}`;
+            
+            cursorTrails.forEach(trail => {
+                trail.element.style.background = redColor;
+            });
+        }
+        
+        // Initialize with default blue color
+        setDefaultCursor();
 
         // Animate cursor trails
         function updateTrails() {
@@ -1586,14 +1573,16 @@
         }
         updateTrails();
 
-        // Hover effects for cursor
-        document.querySelectorAll('.hoverable').forEach(element => {
+        // Hover effects for cursor - change to red on interactive elements
+        document.querySelectorAll('.hoverable, a, button, .cta-button, .comp-card, .skill-item, .social-link, .nav-links a').forEach(element => {
             element.addEventListener('mouseenter', function() {
                 cursor.classList.add('hover');
+                setRedCursor();
             });
             
             element.addEventListener('mouseleave', function() {
                 cursor.classList.remove('hover');
+                setDefaultCursor();
             });
         });
 
